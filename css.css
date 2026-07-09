@@ -1,0 +1,10 @@
+.useful{
+  overflow: hidden; /* by default is visible. Use auto when you don't know how much content you'll be having */
+  overflow-x: scroll; /* can separately control the axes liks this */
+  justify-content: flex-end;
+  align-items: flex-start;
+  flex-direction: column-reverse; /* the entire main axis gets reversed. Content at bottom comes at top and content at top comes at bottom */
+  flex-wrap: wrap; /* no-wrap is the default */
+  /* flex-shrink: 0; */
+  position: static; /* default */
+}

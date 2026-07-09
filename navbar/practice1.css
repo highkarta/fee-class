@@ -1,0 +1,16 @@
+img{
+  position: fixed;
+  z-index: -1;
+}
+
+div{
+  height: 100vh;
+}
+
+#div1{
+  background-color: blue;
+}
+
+#div3{
+  background-color: red;
+}
