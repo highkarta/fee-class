@@ -32,9 +32,11 @@
         </div>
         <form action="" method="">
           <input type="email" name="" id="email" placeholder="abc@email.com" />
-          <input type="password" name="" id="password" placeholder="password" />
-          <div class="pass-info">
-            <p>❔</p>
+          <div id="pass">
+            <input type="password" name="" id="password" placeholder="password" minlength="8"/>
+            <div class="pass-info" title="Add a password of length at least 8">
+              <p>❔</p>
+            </div>
           </div>
           <input type="submit" value="Login" id="btn" />
         </form>

@@ -29,3 +29,9 @@ console.log(a);
 // tdz in let
 // hoisting in function expressions/arrow-functions -> can't be called before declaring
 // standard function call works even if they aren't declared yet
+
+a=[1, 2, 3, 4, 5];
+console.log(a[-1]); // gives undefined, to use negative indexes, use at() keyword
+console.log(a.at(-1));
+
+

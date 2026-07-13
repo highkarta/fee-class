@@ -118,6 +118,12 @@ a:hover {
   font-size: 1.1rem;
 }
 
+#pass{
+  display: flex;
+  width: 125%;
+  position: relative;
+}
+
 form {
   display: flex;
   flex-direction: column;
@@ -171,7 +177,7 @@ p > a {
 }
 
 .chat {
-  position: absolute;
+  position: fixed;
   bottom: 15px;
   right: 15px;
   background-color: green;
@@ -216,5 +222,10 @@ p > a {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* top: 20px; */
+  right: 10px;
+  top: 10px;
+}
+
+.pass-info:hover{
+  cursor: pointer;
 }
