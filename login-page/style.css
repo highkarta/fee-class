@@ -5,12 +5,7 @@
 }
 
 body {
-  height: 100vh;
   color: white;
-  display: flex;
-  flex-direction: column;
-  /* justify-content: center; */
-  align-items: center;
   background: #2a7b9b;
   background: linear-gradient(
     90deg,
@@ -18,19 +13,11 @@ body {
     rgba(87, 199, 133, 1) 50%,
     rgba(237, 221, 83, 1) 100%
   );
-  /* background: rgba(255, 255, 255, 0.5); */
-  /* border-radius: 16px; */
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  /*
-  mask-image: linear-gradient(
-    to bottom, 
-    black 0%, 
-    transparent 50%
-  );
-  */
-  backdrop-filter: blur(6.9px);
-  -webkit-backdrop-filter: blur(6.9px);
-  /* border: 1px solid rgba(255, 255, 255, 0.3); */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
 }
 
 /* NAVBAR */
@@ -83,6 +70,18 @@ a:hover {
 
 /* MAIN */
 #main {
+  z-index: 1;
+  width: 100%;
+  height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); */
+  backdrop-filter: blur(6.9px);
+  -webkit-backdrop-filter: blur(6.9px);
+}
+
+.login {
   /* From https://css.glass */
   background: rgba(255, 255, 255, 0.19);
   border-radius: 16px;
@@ -91,6 +90,7 @@ a:hover {
   -webkit-backdrop-filter: blur(6.9px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   width: 33%;
+  height: 40vh;
   padding: 20px;
   border-radius: 10px;
   display: flex;
@@ -118,7 +118,7 @@ p > a {
 }
 
 #close {
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 16px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(6.9px);
@@ -126,7 +126,7 @@ p > a {
   border: 1px solid rgba(255, 255, 255, 0.3);
 
   position: absolute;
-  right: 20px;
+  right: 10px;
   top: 10px;
   height: 30px;
   width: 30px;
@@ -137,7 +137,7 @@ p > a {
   /* padding: 10px; */
 }
 
-.chat{
+.chat {
   position: absolute;
   bottom: 15px;
   right: 15px;
@@ -149,32 +149,31 @@ p > a {
   border-radius: 50%;
 }
 
-.chat p{
+.chat p {
   font-size: 1.5rem;
 }
 
-.circ{
+.circ {
   position: absolute;
   background-color: orange;
   border-radius: 50%;
-  z-index: -1;
 }
 
-.circ1{
+.circ1 {
   top: 200px;
   left: 100px;
   width: 200px;
   height: 200px;
 }
 
-.circ2{
+.circ2 {
   top: 400px;
   right: 200px;
   width: 150px;
   height: 150px;
 }
 
-.pass-info{
+.pass-info {
   position: absolute;
   background-color: black;
   width: 25px;
