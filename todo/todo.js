@@ -1,104 +1,126 @@
 (function () {
-  // IIFE - immediately invoked function expression, this function automatically gets invoked on page load, you need not manually invoke (calll) it
-  const todos = []; // the scope of this remains to this function only
-  // Jis block of code mei ek variable ki need hai, usi block mei us variable ko define karo -> good practices
+  let todos = JSON.parse(localStorage.getItem('todos')) || []; // at the start when localStorage does not contain anything, todos is an array and post that we extract the value of todos already stored from the localStorage
+  let id = Number(localStorage.getItem('id')) || 0; // same here, initially id is 0. Here we convert the obtained value from localStorage to a number so that string concatenation doesn't happen on reload
 
-  const container = document.getElementById('todo');
+  // DOM Elements
+  const main = document.getElementById('todo');
+  // if (!main) return; // what's the use of this? -> to check whether the div with id todo even exists in the HTML element
+
   const input = document.createElement('input');
   input.type = 'text';
   input.placeholder = 'Enter task...';
 
+  const search = document.createElement('input');
+  search.type = 'text';
+  search.placeholder = 'Search for task';
+
   const addBtn = document.createElement('button');
   addBtn.textContent = 'Add';
 
-  const todoList = document.createElement('div');
-  todoList.style.border = '2px solid black';
-  container.append(input, addBtn, todoList);
+  const searchBtn = document.createElement('button');
+  searchBtn.textContent = 'Search';
 
-  // Implement crud operations in this todo app
+  const todoContainer = document.createElement('div');
+  todoContainer.style.border = '2px solid black';
 
-  const task = input.value.trim(); // Removes the leading and trailing white space and line terminator characters from a string.
+  main.append(input, addBtn, search, searchBtn, todoContainer);
 
-  function addTodo() {
-    const task = input.value;
-    // console.log(task);
-    if (!task) {
-      // prevent user from adding empty tasks
-      return;
-    }
-    todos.unshift(task); // adds element to the beginning of the array
-    rendertask(task); // send task to function
-    input.value = '';
-    input.focus(); // automatically input pe focus aa jaye once we add
-  }
-
-  addBtn.addEventListener('click', addTodo);
+  // Event Listeners
+  addBtn.addEventListener('click', addTodo); // When you attach an event listener, you want to pass a reference to the function so the browser can call it later when the user triggers the event.
   input.addEventListener('keydown', function (e) {
-    // console.log(e);
     if (e.key === 'Enter') {
       addTodo();
     }
   });
 
+  function saveToLocalStorage() {
+    localStorage.setItem('todos', JSON.stringify(todos)); // store the value of todos as a string in the localStorage with the associated todos key
+    localStorage.setItem('id', id);
+  }
 
-  function rendertask(task) {
-    // only new todos are added to the screen, the old ones are already ended, we don't render all todos all times
-    // When each time a task is added, create a p element, which would contain the value of task as innerText
+  todos.forEach((todoObj) => renderTask(todoObj));
 
-    // create a div for each task so that you can add a corresponding delete button with that task
+  function addTodo() {
+    const task = input.value.trim();
+    if (!task) {
+      return;
+    }
+
+    id = id + 1;
+    const todoObj = {
+      id: id,
+      text: task,
+      complete: false,
+    };
+
+    todos.unshift(todoObj); // you append each todo object in an array
+    saveToLocalStorage();
+    renderTask(todoObj); // each time we save a task to localStorage, we render it out on the UI
+
+    input.value = '';
+    input.focus();
+  }
+
+  function renderTask(todoObj) {
     const todoItem = document.createElement('div');
     todoItem.style.border = '2px solid red';
     todoItem.style.margin = '10px';
-    todoList.className = 'todoContainer';
+    todoItem.style.padding = '10px';
+
     const pEl = document.createElement('p');
-    pEl.textContent = task;
-    const deleteBtn = document.createElement('button');
-    deleteBtn.textContent = 'Delete';
+    pEl.textContent = todoObj.text; // accessing values from object using object.key notation
+
+    // These buttons should only render when a task itself is rendered
     const editBtn = document.createElement('button');
     editBtn.textContent = 'Edit';
 
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = 'Delete';
+
     editBtn.addEventListener('click', function () {
-      const editInput = document.createElement('input');
-      editInput.value = task;
-      const saveBtn = document.createElement('button');
-      saveBtn.textContent = 'Save';
-      todoItem.prepend(editInput, saveBtn);
-      editInput.focus();
-      saveBtn.addEventListener('click', function () {
-        const updatedTask = editInput.value;
-        if (!updatedTask) {
-          return;
-        }
-        pEl.textContent = updatedTask;
-        const index = todos.indexOf(task);
-        todos[index] = updatedtask;
-        editInput.remove();
-        saveBtn.remove();
-        console.log(todos);
-      });
+      editTodo(todoObj, todoItem, pEl);
     });
 
     deleteBtn.addEventListener('click', function () {
-      // have to delete both from ui and the array itself (for permanent delete)
-      const index = todos.indexOf(task); // finding index of task within the array. But the problem is that in case of duplicate tasks, indexOf() finds only first method and only deletes that
-      // give each task an id
-      // instead of creating an array, create an array of object where each task has a unique id (based on index)
-
-      // doesn't an easier solution exist based on event.target or something
-      // THIS IS FEE TASK!
-      // Add edit button for each task, then add edit functionality
-      // splice to delete that particular task from array based on index
-      todos.splice(index, 1); // starts from index and deletes only element starting from that index
-      todoItem.remove();
+      deleteTodo(todoObj.id, todoItem);
     });
-    todoItem.append(pEl, deleteBtn, editBtn); // use append here cause the order matters in todoItem
-    todoList.prepend(todoItem); // use instead of append cause we want latest item added to the top
-    // use local storage to preserve these array values across page reloads
+
+    todoItem.append(pEl, editBtn, deleteBtn);
+    todoContainer.prepend(todoItem);
   }
 
-  /*
-  function deleteTask(){
+  function deleteTodo(todoId, todoItem) {
+    todos = todos.filter((item) => item.id !== todoId);
+    saveToLocalStorage();
+    todoItem.remove();
   }
-  */
 
+  function editTodo(todoObj, todoItem, pEl) {
+    const editInput = document.createElement('input');
+    editInput.value = todoObj.text;
+
+    // Save button should only generate once you edit a task
+    const saveBtn = document.createElement('button');
+    saveBtn.textContent = 'Save';
+
+    pEl.style.display = 'none';
+    todoItem.prepend(editInput, saveBtn);
+    editInput.focus();
+
+    saveBtn.addEventListener('click', function () {
+      const updatedText = editInput.value;
+      if (!updatedText) {
+        return;
+      }
+
+      todoObj.text = updatedText;
+      saveToLocalStorage(); // each time we make a change to any of the existing todo properties like the text in this case, we save the changes made to localStorage
+
+      pEl.textContent = updatedText;
+      pEl.style.display = 'block';
+
+      editInput.remove();
+      saveBtn.remove();
+    });
+  }
 })();
