@@ -4,26 +4,35 @@
 
   // DOM Elements
   const main = document.getElementById('todo');
-  // if (!main) return; // what's the use of this? -> to check whether the div with id todo even exists in the HTML element
+  if (!main) return; // to check whether the div with id todo even exists in the HTML element
+
+  // Input wrapper for layout
+  const inputWrapper = document.createElement('div');
+  inputWrapper.className = 'input-wrapper';
 
   const input = document.createElement('input');
   input.type = 'text';
   input.placeholder = 'Enter task...';
 
-  const search = document.createElement('input');
-  search.type = 'text';
-  search.placeholder = 'Search for task';
-
   const addBtn = document.createElement('button');
   addBtn.textContent = 'Add';
 
-  const searchBtn = document.createElement('button');
-  searchBtn.textContent = 'Search';
+  inputWrapper.append(input, addBtn);
+
+  // Search wrapper for layout
+  const searchWrapper = document.createElement('div');
+  searchWrapper.className = 'search-wrapper';
+
+  const search = document.createElement('input');
+  search.type = 'text';
+  search.placeholder = 'Search for task...';
+
+  searchWrapper.append(search);
 
   const todoContainer = document.createElement('div');
-  todoContainer.style.border = '2px solid black';
+  todoContainer.className = 'todoContainer';
 
-  main.append(input, addBtn, search, searchBtn, todoContainer);
+  main.append(inputWrapper, searchWrapper, todoContainer);
 
   // Event Listeners
   addBtn.addEventListener('click', addTodo); // When you attach an event listener, you want to pass a reference to the function so the browser can call it later when the user triggers the event.
@@ -31,6 +40,16 @@
     if (e.key === 'Enter') {
       addTodo();
     }
+  });
+
+  // Real-time search filter
+  search.addEventListener('input', function () {
+    const query = search.value.toLowerCase().trim();
+    const items = todoContainer.querySelectorAll('.todo-item');
+    items.forEach((item) => {
+      const text = item.querySelector('.task-text').textContent.toLowerCase();
+      item.style.display = text.includes(query) ? 'flex' : 'none';
+    });
   });
 
   function saveToLocalStorage() {
@@ -63,29 +82,51 @@
 
   function renderTask(todoObj) {
     const todoItem = document.createElement('div');
-    todoItem.style.border = '2px solid red';
-    todoItem.style.margin = '10px';
-    todoItem.style.padding = '10px';
+    todoItem.className = 'todo-item';
+    todoItem.dataset.id = todoObj.id;
+
+    // Checkbox for task completion
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = todoObj.complete;
+    checkbox.className = 'task-checkbox';
 
     const pEl = document.createElement('p');
+    pEl.className = 'task-text';
     pEl.textContent = todoObj.text; // accessing values from object using object.key notation
+
+    if (todoObj.complete) {
+      pEl.classList.add('completed');
+    }
+
+    checkbox.addEventListener('change', function () {
+      todoObj.complete = checkbox.checked;
+      pEl.classList.toggle('completed', todoObj.complete);
+      saveToLocalStorage();
+    });
+
+    const actionWrapper = document.createElement('div');
+    actionWrapper.className = 'action-buttons';
 
     // These buttons should only render when a task itself is rendered
     const editBtn = document.createElement('button');
     editBtn.textContent = 'Edit';
+    editBtn.className = 'btn-edit';
 
     const deleteBtn = document.createElement('button');
     deleteBtn.textContent = 'Delete';
+    deleteBtn.className = 'btn-delete';
 
     editBtn.addEventListener('click', function () {
-      editTodo(todoObj, todoItem, pEl);
+      editTodo(todoObj, todoItem, pEl, editBtn);
     });
 
     deleteBtn.addEventListener('click', function () {
       deleteTodo(todoObj.id, todoItem);
     });
 
-    todoItem.append(pEl, editBtn, deleteBtn);
+    actionWrapper.append(editBtn, deleteBtn);
+    todoItem.append(checkbox, pEl, actionWrapper);
     todoContainer.prepend(todoItem);
   }
 
@@ -95,20 +136,33 @@
     todoItem.remove();
   }
 
-  function editTodo(todoObj, todoItem, pEl) {
+  function editTodo(todoObj, todoItem, pEl, editBtn) {
+    // FIX: Guard clause to prevent opening multiple edit fields
+    if (todoItem.classList.contains('is-editing')) return;
+    todoItem.classList.add('is-editing');
+
+    const editWrapper = document.createElement('div');
+    editWrapper.className = 'edit-wrapper';
+
     const editInput = document.createElement('input');
+    editInput.type = 'text';
     editInput.value = todoObj.text;
+    editInput.className = 'edit-input';
 
     // Save button should only generate once you edit a task
     const saveBtn = document.createElement('button');
     saveBtn.textContent = 'Save';
+    saveBtn.className = 'btn-save';
 
     pEl.style.display = 'none';
-    todoItem.prepend(editInput, saveBtn);
+    editBtn.style.display = 'none';
+
+    editWrapper.append(editInput, saveBtn);
+    todoItem.insertBefore(editWrapper, pEl);
     editInput.focus();
 
-    saveBtn.addEventListener('click', function () {
-      const updatedText = editInput.value;
+    function handleSave() {
+      const updatedText = editInput.value.trim();
       if (!updatedText) {
         return;
       }
@@ -118,9 +172,15 @@
 
       pEl.textContent = updatedText;
       pEl.style.display = 'block';
+      editBtn.style.display = 'inline-block';
 
-      editInput.remove();
-      saveBtn.remove();
+      editWrapper.remove();
+      todoItem.classList.remove('is-editing');
+    }
+
+    saveBtn.addEventListener('click', handleSave);
+    editInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') handleSave();
     });
   }
 })();
