@@ -1,0 +1,50 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+button{
+  font-size: 1rem;
+  background-color: royalblue;
+  color: white;
+  padding: 7px 12px;
+  border-radius: 5px;
+  border: none;
+  width: fit-content;
+  margin-right: 10px;
+}
+
+button:hover{
+  background-color: rgb(45, 82, 192);
+}
+
+input{
+  width: fit-content;
+  font-size: 1rem;
+  padding: 5px 10px;
+}
+
+body{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#todo{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background-color: #101010;
+  padding: 20px 50px;
+  border-radius: 10px;
+  margin-top: 20vh;
+  color: white;
+}
+
+.todoContainer{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
