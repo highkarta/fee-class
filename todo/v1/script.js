@@ -1,5 +1,6 @@
 (function () {
-  let todos = JSON.parse(localStorage.getItem('todos')) || []; // at the start when localStorage does not contain anything, todos is an array and post that we extract the value of todos already stored from the localStorage
+  let todos = JSON.parse(localStorage.getItem('todos')) || []; // at the start when localStorage does not contain anything, todos is an array and post that we extract the value of todos already stored in the localStorage
+  // JSON.pase() to convert the JSON data obtained from localStorage into a native data structure, which is array in this case
   let id = Number(localStorage.getItem('id')) || 0; // same here, initially id is 0. Here we convert the obtained value from localStorage to a number so that string concatenation doesn't happen on reload
 
   // DOM Elements
@@ -9,21 +10,32 @@
   const input = document.createElement('input');
   input.type = 'text';
   input.placeholder = 'Enter task...';
-
+  
   const search = document.createElement('input');
   search.type = 'text';
   search.placeholder = 'Search for task';
-
+  
   const addBtn = document.createElement('button');
   addBtn.textContent = 'Add';
-
+  
   const searchBtn = document.createElement('button');
   searchBtn.textContent = 'Search';
+  
+  const inputDiv = document.createElement('div');
+  inputDiv.className = 'userInput';
+  // inputDiv.id = 'inputDiv';
+  inputDiv.append(input, addBtn);
+
+  const searchDiv = document.createElement('div');
+  searchDiv.className = 'userInput';
+  // searchDiv.id = 'searchDiv';
+  searchDiv.append(search, searchBtn);
 
   const todoContainer = document.createElement('div');
-  todoContainer.style.border = '2px solid black';
+  todoContainer.id = 'todoContainer';
+  // todoContainer.style.border = '2px solid black';
 
-  main.append(input, addBtn, search, searchBtn, todoContainer);
+  main.append(inputDiv, searchDiv, todoContainer);
 
   // Event Listeners
   addBtn.addEventListener('click', addTodo); // When you attach an event listener, you want to pass a reference to the function so the browser can call it later when the user triggers the event.
@@ -79,9 +91,11 @@
 
   function renderTask(todoObj) {
     const todoItem = document.createElement('div');
-    todoItem.style.border = '2px solid red';
-    todoItem.style.margin = '10px';
-    todoItem.style.padding = '10px';
+    todoItem.className = 'todoItem';
+    // todoItem.style.border = '2px solid black';
+    // todoItem.style.backgroundColor = 'white';
+    // todoItem.style.margin = '10px';
+    // todoItem.style.padding = '10px';
 
     const pEl = document.createElement('p');
     pEl.textContent = todoObj.text; // accessing values from object using object.key notation
@@ -95,14 +109,20 @@
 
     editBtn.addEventListener('click', function () {
       editTodo(todoObj, todoItem, pEl, deleteBtn);
-      editBtn.remove();
+      // editBtn.remove(); // removing it will remove it from the dom itself, not a viable option
+      editBtn.classList.remove('show');
+      editBtn.classList.add('hide');
     });
 
     deleteBtn.addEventListener('click', function () {
       deleteTodo(todoObj.id, todoItem);
     });
 
-    todoItem.append(pEl, editBtn, deleteBtn);
+    const taskFuncs = document.createElement('div');
+    taskFuncs.append(editBtn, deleteBtn)
+    taskFuncs.className = 'taskFuncs';
+
+    todoItem.append(pEl, taskFuncs);
     todoContainer.prepend(todoItem);
   }
 
@@ -141,9 +161,10 @@
 
       editInput.remove();
       saveBtn.remove();
-      todoItem.insertBefore(editBtn, deleteBtn);
+      // todoItem.insertBefore(editBtn, deleteBtn);
       // editBtn.append();
-      // editBtn.style.display = "block";
+      editBtn.classList.remove('hide');
+      editBtn.classList.add('show');
     });
   }
 
